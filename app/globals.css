@@ -1,12 +1,13 @@
 @import "tailwindcss";
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   overflow: hidden;
   background-color: #000;
   touch-action: none;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 * {
@@ -31,7 +32,6 @@ canvas {
   pointer-events: auto;
 }
 
-/* Avoid @apply for these custom classes in Tailwind v4 */
 .panel {
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(12px);
@@ -75,7 +75,7 @@ canvas {
 .touch-btn {
   background: rgba(255, 255, 255, 0.2);
   border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 9999px;
+  border-radius: 50%;
   width: 65px;
   height: 65px;
   display: flex;

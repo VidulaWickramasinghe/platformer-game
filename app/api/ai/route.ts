@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
       data?.candidates?.[0]?.content?.parts?.[0]?.text || "No response from AI.";
 
     return NextResponse.json({ text });
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { error: "Server error while calling Gemini." },
       { status: 500 }
