@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { auth, db, ensureAnonymousAuth } from "@/lib/firebase";
+import { ensureAnonymousAuth, getFirebaseServices } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 type UserProfile = {
@@ -29,6 +29,8 @@ export default function PlatformerGame() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     const context = ctx;
+
+    const firebaseServices = getFirebaseServices();
 
     let width = 0;
     let height = 0;
@@ -63,15 +65,15 @@ export default function PlatformerGame() {
     }
 
     async function loadUserData() {
-      if (!auth.currentUser) return;
+      if (!firebaseServices?.auth || !firebaseServices.db || !firebaseServices.auth.currentUser) return;
 
       try {
         const docRef = doc(
-          db,
+          firebaseServices.db,
           "artifacts",
           appId,
           "users",
-          auth.currentUser.uid,
+          firebaseServices.auth.currentUser.uid,
           "gamedata",
           "profile"
         );
@@ -99,15 +101,15 @@ export default function PlatformerGame() {
     }
 
     async function saveUserData() {
-      if (!auth.currentUser) return;
+      if (!firebaseServices?.auth || !firebaseServices.db || !firebaseServices.auth.currentUser) return;
 
       try {
         const docRef = doc(
-          db,
+          firebaseServices.db,
           "artifacts",
           appId,
           "users",
-          auth.currentUser.uid,
+          firebaseServices.auth.currentUser.uid,
           "gamedata",
           "profile"
         );
