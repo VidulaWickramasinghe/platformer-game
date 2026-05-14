@@ -275,9 +275,14 @@ export default function PlatformerGame() {
       showScreen("screen-main-menu");
     };
 
+    const gotoLevelsBtn = document.getElementById("btn-goto-levels");
     const gotoSettingsBtn = document.getElementById("btn-goto-settings");
     const levelsBackBtn = document.getElementById("btn-levels-back");
     const cancelSettingsBtn = document.getElementById("btn-cancel-settings");
+
+    const onGotoLevels = () => {
+      showScreen("screen-level-select");
+    };
 
     const onGotoSettings = () => {
       if (inputUsername) inputUsername.value = userProfile.username;
@@ -289,6 +294,7 @@ export default function PlatformerGame() {
     };
 
     backstoryBtn?.addEventListener("click", onBackstoryClick);
+    gotoLevelsBtn?.addEventListener("click", onGotoLevels);
     saveSettingsBtn?.addEventListener("click", onSaveSettings);
     gotoSettingsBtn?.addEventListener("click", onGotoSettings);
     levelsBackBtn?.addEventListener("click", onBackToMenu);
@@ -301,6 +307,7 @@ export default function PlatformerGame() {
       cancelAnimationFrame(animationFrameId);
 
       backstoryBtn?.removeEventListener("click", onBackstoryClick);
+      gotoLevelsBtn?.removeEventListener("click", onGotoLevels);
       saveSettingsBtn?.removeEventListener("click", onSaveSettings);
       gotoSettingsBtn?.removeEventListener("click", onGotoSettings);
       levelsBackBtn?.removeEventListener("click", onBackToMenu);
