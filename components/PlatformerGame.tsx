@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { auth, db, ensureAnonymousAuth } from "@/lib/firebase";
+import { ensureAnonymousAuth, getFirebaseServices } from "@/lib/firebase";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 type UserProfile = {
@@ -28,6 +28,9 @@ export default function PlatformerGame() {
     const canvas = canvasEl;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+    const context = ctx;
+
+    const firebaseServices = getFirebaseServices();
 
     let width = 0;
     let height = 0;
@@ -62,15 +65,15 @@ export default function PlatformerGame() {
     }
 
     async function loadUserData() {
-      if (!auth.currentUser) return;
+      if (!firebaseServices?.auth || !firebaseServices.db || !firebaseServices.auth.currentUser) return;
 
       try {
         const docRef = doc(
-          db,
+          firebaseServices.db,
           "artifacts",
           appId,
           "users",
-          auth.currentUser.uid,
+          firebaseServices.auth.currentUser.uid,
           "gamedata",
           "profile"
         );
@@ -98,15 +101,15 @@ export default function PlatformerGame() {
     }
 
     async function saveUserData() {
-      if (!auth.currentUser) return;
+      if (!firebaseServices?.auth || !firebaseServices.db || !firebaseServices.auth.currentUser) return;
 
       try {
         const docRef = doc(
-          db,
+          firebaseServices.db,
           "artifacts",
           appId,
           "users",
-          auth.currentUser.uid,
+          firebaseServices.auth.currentUser.uid,
           "gamedata",
           "profile"
         );
@@ -125,19 +128,19 @@ export default function PlatformerGame() {
     }
 
     function drawBackground() {
-      ctx.fillStyle = "#0f172a";
-      ctx.fillRect(0, 0, width, height);
+      context.fillStyle = "#0f172a";
+      context.fillRect(0, 0, width, height);
 
-      ctx.fillStyle = "rgba(255,255,255,0.06)";
+      context.fillStyle = "rgba(255,255,255,0.06)";
       for (let i = 0; i < 8; i++) {
         const x = (i * 220 + Date.now() * 0.01) % (width + 200) - 100;
         const y = 60 + (i % 4) * 70;
 
-        ctx.beginPath();
-        ctx.arc(x, y, 30, 0, Math.PI * 2);
-        ctx.arc(x + 30, y, 40, 0, Math.PI * 2);
-        ctx.arc(x + 60, y, 30, 0, Math.PI * 2);
-        ctx.fill();
+        context.beginPath();
+        context.arc(x, y, 30, 0, Math.PI * 2);
+        context.arc(x + 30, y, 40, 0, Math.PI * 2);
+        context.arc(x + 60, y, 30, 0, Math.PI * 2);
+        context.fill();
       }
     }
 
@@ -145,31 +148,31 @@ export default function PlatformerGame() {
       const playerX = Math.max(80, Math.min(width / 3, width - 160));
       const playerY = height - 180;
 
-      ctx.fillStyle = "rgba(0,0,0,0.35)";
-      ctx.beginPath();
-      ctx.ellipse(playerX + 20, playerY + 55, 26, 7, 0, 0, Math.PI * 2);
-      ctx.fill();
+      context.fillStyle = "rgba(0,0,0,0.35)";
+      context.beginPath();
+      context.ellipse(playerX + 20, playerY + 55, 26, 7, 0, 0, Math.PI * 2);
+      context.fill();
 
-      ctx.fillStyle = "#3b82f6";
-      ctx.beginPath();
-      ctx.roundRect(playerX, playerY, 40, 50, 8);
-      ctx.fill();
+      context.fillStyle = "#3b82f6";
+      context.beginPath();
+      context.roundRect(playerX, playerY, 40, 50, 8);
+      context.fill();
 
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(playerX + 8, playerY + 10, 8, 14);
-      ctx.fillRect(playerX + 24, playerY + 10, 8, 14);
+      context.fillStyle = "#fff";
+      context.fillRect(playerX + 8, playerY + 10, 8, 14);
+      context.fillRect(playerX + 24, playerY + 10, 8, 14);
 
-      ctx.fillStyle = "#000";
-      ctx.fillRect(playerX + 10, playerY + 14, 4, 6);
-      ctx.fillRect(playerX + 26, playerY + 14, 4, 6);
+      context.fillStyle = "#000";
+      context.fillRect(playerX + 10, playerY + 14, 4, 6);
+      context.fillRect(playerX + 26, playerY + 14, 4, 6);
     }
 
     function drawGround() {
-      ctx.fillStyle = "#4ade80";
-      ctx.fillRect(0, height - 90, width, 15);
+      context.fillStyle = "#4ade80";
+      context.fillRect(0, height - 90, width, 15);
 
-      ctx.fillStyle = "#854d0e";
-      ctx.fillRect(0, height - 75, width, 75);
+      context.fillStyle = "#854d0e";
+      context.fillRect(0, height - 75, width, 75);
     }
 
     let animationFrameId = 0;
