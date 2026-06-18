@@ -91,7 +91,7 @@ export default function PlatformerGame() {
     let width = 0;
     let height = 0;
     let animationFrameId = 0;
-    let activeLevel = 1;
+    let currentLevelId = 1;
     let mode: GameMode = "menu";
     let cameraX = 0;
     let levelState: LevelState | null = null;
@@ -231,7 +231,7 @@ export default function PlatformerGame() {
       const hudCoins = document.getElementById("hud-coins");
       const hudHint = document.getElementById("hud-hint");
 
-      if (hudLevel) hudLevel.textContent = `Stage ${activeLevel}`;
+      if (hudLevel) hudLevel.textContent = `Stage ${currentLevelId}`;
       if (hudScore) hudScore.textContent = String(levelState?.score ?? 0);
       if (hudCoins) {
         hudCoins.textContent = `${levelState?.coinsCollected ?? 0}/${levelState?.coins.length ?? 0}`;
@@ -403,7 +403,7 @@ export default function PlatformerGame() {
     }
 
     function startLevel(level: number) {
-      activeLevel = level;
+      currentLevelId = level;
       mode = "playing";
       cameraX = 0;
       levelState = createLevel(level);
@@ -428,12 +428,12 @@ export default function PlatformerGame() {
       if (!levelState) return;
 
       mode = "result";
-      const bonus = 100 * activeLevel + levelState.coinsCollected * 25;
+      const bonus = 100 * currentLevelId + levelState.coinsCollected * 25;
       levelState.score += bonus;
       userProfile.totalScore += levelState.score;
       userProfile.levelsUnlocked = Math.max(
         userProfile.levelsUnlocked,
-        Math.min(TOTAL_LEVELS, activeLevel + 1)
+        Math.min(TOTAL_LEVELS, currentLevelId + 1)
       );
       updateMenuUI();
       renderLevelSelect();
@@ -441,7 +441,7 @@ export default function PlatformerGame() {
 
       const resultTitle = document.getElementById("result-title");
       const resultMessage = document.getElementById("result-message");
-      if (resultTitle) resultTitle.textContent = `Stage ${activeLevel} Complete!`;
+      if (resultTitle) resultTitle.textContent = `Stage ${currentLevelId} Complete!`;
       if (resultMessage) {
         resultMessage.textContent = `You collected ${levelState.coinsCollected}/${levelState.coins.length} coins and earned ${levelState.score} points.`;
       }
@@ -699,7 +699,7 @@ export default function PlatformerGame() {
       showScreen("screen-main-menu");
     };
 
-    const onRestartLevel = () => startLevel(activeLevel);
+    const onRestartLevel = () => startLevel(currentLevelId);
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Escape") {
         if (mode === "playing") pauseGame();
