@@ -48,6 +48,8 @@ export default function PlatformerGame() {
       },
     };
 
+    let activeLevel = 1;
+
     async function callAI(prompt: string, systemInstruction?: string) {
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -198,6 +200,61 @@ export default function PlatformerGame() {
       if (inputUsername) inputUsername.value = userProfile.username;
     }
 
+    function updateHud() {
+      const hudLevel = document.getElementById("hud-level");
+      const hudScore = document.getElementById("hud-score");
+
+      if (hudLevel) hudLevel.textContent = `Stage ${activeLevel}`;
+      if (hudScore) hudScore.textContent = String(userProfile.totalScore);
+    }
+
+    function startLevel(level: number) {
+      activeLevel = level;
+      updateHud();
+      showScreen("screen-hud");
+    }
+
+    function renderLevelSelect() {
+      const levelsGrid = document.getElementById("levels-grid");
+      if (!levelsGrid) return;
+
+      levelsGrid.innerHTML = "";
+
+      for (let level = 1; level <= 6; level++) {
+        const isUnlocked = level <= userProfile.levelsUnlocked;
+        const levelButton = document.createElement("button");
+        levelButton.type = "button";
+        levelButton.className = [
+          "level-btn",
+          "rounded-2xl",
+          "p-4",
+          "font-black",
+          "uppercase",
+          "tracking-wide",
+          "border-b-4",
+          isUnlocked
+            ? "bg-blue-500 text-white border-blue-700 cursor-pointer"
+            : "locked bg-gray-300 text-gray-600 border-gray-500",
+        ].join(" ");
+        levelButton.disabled = !isUnlocked;
+        levelButton.setAttribute(
+          "aria-label",
+          isUnlocked ? `Start stage ${level}` : `Stage ${level} locked`
+        );
+        levelButton.innerHTML = `
+          <span class="block text-3xl mb-1">${isUnlocked ? "⭐" : "🔒"}</span>
+          <span class="block">Stage ${level}</span>
+          <span class="block text-xs font-bold opacity-80 mt-1">${isUnlocked ? "Ready" : "Locked"}</span>
+        `;
+
+        if (isUnlocked) {
+          levelButton.addEventListener("click", () => startLevel(level));
+        }
+
+        levelsGrid.appendChild(levelButton);
+      }
+    }
+
     function showScreen(targetId: string) {
       const screens = [
         "screen-loading",
@@ -230,6 +287,7 @@ export default function PlatformerGame() {
       }
 
       updateMenuUI();
+      renderLevelSelect();
       showScreen("screen-main-menu");
       animationFrameId = requestAnimationFrame(gameLoop);
     }
@@ -281,6 +339,7 @@ export default function PlatformerGame() {
     const cancelSettingsBtn = document.getElementById("btn-cancel-settings");
 
     const onGotoLevels = () => {
+      renderLevelSelect();
       showScreen("screen-level-select");
     };
 
@@ -452,7 +511,16 @@ export default function PlatformerGame() {
           </div>
         </div>
 
-        <div id="screen-hud" className="absolute inset-0 hidden" />
+        <div id="screen-hud" className="absolute inset-0 hidden pointer-events-none">
+          <div className="absolute left-4 top-4 glass-panel rounded-2xl px-4 py-3 font-black text-white">
+            <p id="hud-level" className="text-lg uppercase tracking-wide">
+              Stage 1
+            </p>
+            <p className="text-sm text-yellow-300">
+              Score: <span id="hud-score">0</span>
+            </p>
+          </div>
+        </div>
         <div id="screen-pause" className="absolute inset-0 hidden" />
         <div id="screen-result" className="absolute inset-0 hidden" />
       </div>
