@@ -110,6 +110,8 @@ export default function PlatformerGame() {
       },
     };
 
+    let activeLevel = 1;
+
     async function callAI(prompt: string, systemInstruction?: string) {
       const response = await fetch("/api/ai", {
         method: "POST",
@@ -679,6 +681,11 @@ export default function PlatformerGame() {
 
     const onGotoLevels = () => {
       mode = "menu";
+      renderLevelSelect();
+      showScreen("screen-level-select");
+    };
+
+    const onGotoLevels = () => {
       renderLevelSelect();
       showScreen("screen-level-select");
     };
