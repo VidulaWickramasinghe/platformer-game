@@ -685,11 +685,6 @@ export default function PlatformerGame() {
       showScreen("screen-level-select");
     };
 
-    const onGotoLevels = () => {
-      renderLevelSelect();
-      showScreen("screen-level-select");
-    };
-
     const onGotoSettings = () => {
       if (inputUsername) inputUsername.value = userProfile.username;
       showScreen("screen-settings");
