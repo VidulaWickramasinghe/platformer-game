@@ -14,6 +14,11 @@ const eslintConfig = [
   {
     ignores: [".next/**", "out/**", "build/**", "next-env.d.ts"],
   },
+  {
+    rules: {
+      "prefer-const": "warn",
+    },
+  },
 ];
 
 export default eslintConfig;
